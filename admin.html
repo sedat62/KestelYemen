@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Best of Cafe - Admin Panel" />
+    <title>Admin Panel | Best of Cafe</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <!-- Admin Navigation -->
+    <nav class="bg-gray-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M2,21V19H20V21H2M20,8V5H18V8H20M20,3A2,2 0 0,1 22,5V8A2,2 0 0,1 20,10H18V13A4,4 0 0,1 14,17H8A4,4 0 0,1 4,13V3H20M16,5H6V13A2,2 0 0,0 8,15H14A2,2 0 0,0 16,13V5Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold font-display">Best of Cafe</h1>
+                        <p class="text-xs text-amber-400">Admin Panel</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <a href="/" target="_blank" class="text-gray-300 hover:text-white text-sm flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Siteyi Görüntüle
+                    </a>
+                    <div id="maintenanceStatus" class="flex items-center gap-2 text-sm">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span>Site Aktif</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Bugünkü Siparişler</p>
+                        <p id="todayOrders" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Bekleyen Siparişler</p>
+                        <p id="pendingOrders" class="text-3xl font-bold text-orange-500 mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Bugünkü Gelir</p>
+                        <p id="todayRevenue" class="text-3xl font-bold text-green-600 mt-1">₺0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Toplam Menü Ürünü</p>
+                        <p id="totalMenuItems" class="text-3xl font-bold text-purple-600 mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-2xl shadow-sm mb-8">
+            <div class="border-b border-gray-100">
+                <nav class="flex gap-8 px-6">
+                    <button id="tabOrders"
+                        class="admin-tab active py-4 text-sm font-medium border-b-2 border-amber-500 text-amber-600">
+                        Masa Siparişleri
+                    </button>
+                    <button id="tabMenu"
+                        class="admin-tab py-4 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent">
+                        Menü Yönetimi
+                    </button>
+                    <button id="tabSettings"
+                        class="admin-tab py-4 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent">
+                        Site Ayarları
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Tab Content: Orders -->
+        <div id="ordersContent" class="tab-content">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Masa Durumları</h2>
+            <div id="tablesGrid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Tables will be rendered here -->
+            </div>
+        </div>
+
+        <!-- Tab Content: Menu -->
+        <div id="menuContent" class="tab-content hidden">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Menü Yönetimi</h2>
+                <button id="addMenuItemBtn"
+                    class="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 py-2 rounded-lg font-medium text-sm hover:shadow-lg transition-all flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Yeni Ürün Ekle
+                </button>
+            </div>
+
+            <!-- Menu Category Filter -->
+            <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+                <button data-filter="all"
+                    class="menu-filter active px-4 py-2 rounded-lg text-sm font-medium bg-amber-500 text-white">Tümü</button>
+                <button data-filter="yemek"
+                    class="menu-filter px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">Yemekler</button>
+                <button data-filter="icecek"
+                    class="menu-filter px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">İçecekler</button>
+                <button data-filter="nargile"
+                    class="menu-filter px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">Nargile</button>
+            </div>
+
+            <div id="menuItemsList" class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <!-- Menu items will be rendered here -->
+            </div>
+        </div>
+
+        <!-- Tab Content: Settings -->
+        <div id="settingsContent" class="tab-content hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Site Ayarları</h2>
+
+            <div class="grid gap-6">
+                <!-- Maintenance Mode -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Bakım Modu</h3>
+                            <p class="text-gray-500 text-sm mt-1">Siteyi bakım moduna alarak müşterilerin sipariş
+                                vermesini engelleyebilirsiniz.</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="maintenanceToggle" class="sr-only peer">
+                            <div
+                                class="w-14 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-red-500">
+                            </div>
+                        </label>
+                    </div>
+                    <div id="maintenanceWarning" class="hidden mt-4 p-4 bg-red-50 rounded-xl border border-red-100">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <p class="text-red-700 text-sm font-medium">Site şu anda bakım modunda! Müşteriler sipariş
+                                veremez.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Site Info -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Cafe Bilgileri</h3>
+                    <div class="grid gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cafe Adı</label>
+                            <input type="text" id="cafeName" value="Best of Cafe"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+                            <input type="text" id="cafePhone" value="+90 (555) 123 45 67"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Adres</label>
+                            <input type="text" id="cafeAddress" value="İstanbul, Türkiye"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                        </div>
+                        <button id="saveSettingsBtn"
+                            class="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg transition-all w-fit">
+                            Ayarları Kaydet
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table Count -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Masa Sayısı</h3>
+                    <p class="text-gray-500 text-sm mb-4">Cafenizde kaç masa olduğunu belirleyin.</p>
+                    <div class="flex items-center gap-4">
+                        <input type="number" id="tableCount" value="8" min="1" max="50"
+                            class="w-24 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-center">
+                        <span class="text-gray-600">masa</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="hidden modal-overlay">
+        <div class="modal-content max-w-lg">
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <h3 id="orderModalTitle" class="text-xl font-bold text-gray-800">Masa 1 - Sipariş Detayı</h3>
+                <button id="closeOrderModal" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="orderDetailContent" class="p-6">
+                <!-- Order details will be rendered here -->
+            </div>
+            <div class="p-6 border-t border-gray-100 flex gap-3">
+                <button id="completeOrderBtn"
+                    class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-medium transition-colors">
+                    Siparişi Tamamla
+                </button>
+                <button id="cancelOrderBtn"
+                    class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition-colors">
+                    İptal Et
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Menu Item Modal -->
+    <div id="menuItemModal" class="hidden modal-overlay">
+        <div class="modal-content max-w-lg">
+            <div class="p-6 border-b border-gray-100">
+                <h3 id="menuModalTitle" class="text-xl font-bold text-gray-800">Yeni Ürün Ekle</h3>
+            </div>
+            <form id="menuItemForm" class="p-6 space-y-4">
+                <input type="hidden" id="menuItemId">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Ürün Adı</label>
+                    <input type="text" id="menuItemName" required
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                        placeholder="Örn: Izgara Köfte">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Açıklama</label>
+                    <textarea id="menuItemDesc" rows="2"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none resize-none"
+                        placeholder="Ürün açıklaması..."></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fiyat (₺)</label>
+                        <input type="number" id="menuItemPrice" required min="0"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                            placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                        <select id="menuItemType"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                            <option value="yemek">Yemek</option>
+                            <option value="icecek">İçecek</option>
+                            <option value="nargile">Nargile</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Alt Kategori</label>
+                    <input type="text" id="menuItemCategory"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                        placeholder="Örn: ana-yemek, kahve, meyve">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Görsel URL</label>
+                    <input type="url" id="menuItemImage"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                        placeholder="https://...">
+                </div>
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" id="menuItemPopular"
+                        class="w-5 h-5 rounded border-gray-300 text-amber-500 focus:ring-amber-500">
+                    <label for="menuItemPopular" class="text-sm font-medium text-gray-700">Popüler Ürün</label>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancelMenuItemBtn"
+                        class="flex-1 py-3 border border-gray-200 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-colors">İptal</button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <script type="module" src="/src/admin.ts"></script>
+</body>
+
+</html>

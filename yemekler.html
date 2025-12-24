@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Best of Cafe - En lezzetli yemekler. Kahvaltı, ana yemekler, tatlılar ve daha fazlası." />
+    <title>Yemekler | Best of Cafe</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-white min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="/" class="flex items-center gap-3">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
+                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M2,21V19H20V21H2M20,8V5H18V8H20M20,3A2,2 0 0,1 22,5V8A2,2 0 0,1 20,10H18V13A4,4 0 0,1 14,17H8A4,4 0 0,1 4,13V3H20M16,5H6V13A2,2 0 0,0 8,15H14A2,2 0 0,0 16,13V5Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800 font-display">Best of Cafe</h1>
+                        <p class="text-xs text-amber-600 font-medium">Lezzet Durağınız</p>
+                    </div>
+                </a>
+
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="/" class="text-gray-700 hover:text-amber-600 font-medium transition-colors">Ana Sayfa</a>
+                    <a href="/yemekler.html" class="text-amber-600 font-medium">Yemekler</a>
+                    <a href="/icecekler.html"
+                        class="text-gray-700 hover:text-amber-600 font-medium transition-colors">İçecekler</a>
+                    <a href="/nargile.html"
+                        class="text-gray-700 hover:text-amber-600 font-medium transition-colors">Nargile</a>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <!-- Table Badge -->
+                    <div id="tableBadge"
+                        class="hidden md:flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span class="font-medium text-sm">Masa <span id="tableNumberDisplay">1</span></span>
+                    </div>
+
+                    <button id="cartBtn"
+                        class="relative p-3 bg-amber-50 hover:bg-amber-100 rounded-full transition-colors">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <span id="cartBadge" class="order-badge hidden">0</span>
+                    </button>
+
+                    <button id="mobileMenuBtn" class="md:hidden p-2 text-gray-600 hover:text-amber-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block py-2 text-gray-700 hover:text-amber-600 font-medium">Ana Sayfa</a>
+                <a href="/yemekler.html" class="block py-2 text-amber-600 font-medium">Yemekler</a>
+                <a href="/icecekler.html"
+                    class="block py-2 text-gray-700 hover:text-amber-600 font-medium">İçecekler</a>
+                <a href="/nargile.html" class="block py-2 text-gray-700 hover:text-amber-600 font-medium">Nargile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-16 bg-gradient-to-br from-amber-50 via-white to-orange-50">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-amber-200/30 rounded-full blur-3xl"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <div
+                    class="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span>Taze & Lezzetli</span>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold text-gray-800 mb-4 font-display">Yemekler</h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Geleneksel Türk mutfağından dünya lezzetlerine, en
+                    taze malzemelerle hazırlanan yemeklerimiz</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-3 py-4 overflow-x-auto scrollbar-hide">
+                <button data-category="all"
+                    class="category-filter active px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-amber-500 text-white">
+                    Tümü
+                </button>
+                <button data-category="kahvalti"
+                    class="category-filter px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-600">
+                    Kahvaltı
+                </button>
+                <button data-category="ana-yemek"
+                    class="category-filter px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-600">
+                    Ana Yemekler
+                </button>
+                <button data-category="salata"
+                    class="category-filter px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-600">
+                    Salatalar
+                </button>
+                <button data-category="burger"
+                    class="category-filter px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-600">
+                    Burgerler
+                </button>
+                <button data-category="pizza"
+                    class="category-filter px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-600">
+                    Pizzalar
+                </button>
+                <button data-category="tatli"
+                    class="category-filter px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all bg-gray-100 text-gray-600 hover:bg-amber-100 hover:text-amber-600">
+                    Tatlılar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Items -->
+    <section class="py-12 bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="menuGrid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Items will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M2,21V19H20V21H2M20,8V5H18V8H20M20,3A2,2 0 0,1 22,5V8A2,2 0 0,1 20,10H18V13A4,4 0 0,1 14,17H8A4,4 0 0,1 4,13V3H20M16,5H6V13A2,2 0 0,0 8,15H14A2,2 0 0,0 16,13V5Z" />
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold font-display">Best of Cafe</span>
+                </div>
+                <p class="text-gray-400 text-sm">&copy; 2024 Best of Cafe. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="cartOverlay"></div>
+        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300"
+            id="cartPanel">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center justify-between p-6 border-b border-gray-100">
+                    <h3 class="text-xl font-bold text-gray-800">Sepetim</h3>
+                    <button id="closeCart" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="cartItems" class="flex-1 overflow-y-auto p-6"></div>
+                <div class="border-t border-gray-100 p-6 bg-gray-50">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-600">Toplam</span>
+                        <span id="cartTotal" class="text-2xl font-bold text-gray-800">₺0</span>
+                    </div>
+                    <button id="checkoutBtn"
+                        class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        Sipariş Ver
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="orderModal" class="hidden modal-overlay">
+        <div class="modal-content">
+            <div class="p-6 border-b border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800">Sipariş Bilgileri</h3>
+            </div>
+            <form id="orderForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Masa Numarası</label>
+                    <input type="text" name="tableNumber" id="tableNumberInput" required readonly
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-600 outline-none"
+                        value="1">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Adınız</label>
+                    <input type="text" name="customerName" required
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                        placeholder="Adınızı girin">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Not (Opsiyonel)</label>
+                    <textarea name="notes" rows="3"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none resize-none"
+                        placeholder="Ekstra isteklerinizi yazın..."></textarea>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" id="cancelOrder"
+                        class="flex-1 py-3 border border-gray-200 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-colors">İptal</button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">Siparişi
+                        Onayla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
