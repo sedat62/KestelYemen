@@ -585,6 +585,7 @@ function updateNavigationLinks() {
   if (!pathMatch) return;
 
   const prefix = pathMatch[0]; // e.g. "/masa1"
+  const baseUrl = import.meta.env.BASE_URL; // e.g. "/KestelYemen/" or "/"
 
   document.querySelectorAll('a').forEach(link => {
     const href = link.getAttribute('href');
@@ -593,22 +594,54 @@ function updateNavigationLinks() {
     // Skip external links, anchors, mailto, tel
     if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
 
-    // Skip if already prefixed
-    if (href.startsWith('/masa')) return;
+    // Skip if already prefixed correctly
+    if (href.includes('/masa')) return;
 
-    // Normalize and prefix
+    // Normalize logic
+    // We want to construct: base + masa[n] + relative_path
+    // But since "masa[n]" is a virtual folder, relative dots might need care.
+
+    // Simplified: Just use the current path structure if valid
+    // Or better: Reconstruct from root to avoid multiple prefixes
+
+    // For this specific deployment structure, let's keep it simple:
+    // If we are at /KestelYemen/masa1/
+    // And link is ./yemekler.html
+    // Browser resolves to /KestelYemen/masa1/yemekler.html AUTOMATICALLY.
+    // We only need to touch links that go back to root or are absolute.
+
+    // IF we are using the virtual path approach, we mostly don't need to rewrite relative ./ links!
+    // The browser does it for us.
+    // We only need to fix / (root) links.
+
     let newHref = href;
+
+    // Handle root links
     if (href === './' || href === '/' || href === '.') {
-      newHref = `${prefix}/`;
-    } else if (href.startsWith('./')) {
-      newHref = `${prefix}/${href.substring(2)}`;
-    } else if (href.startsWith('/')) {
-      newHref = `${prefix}${href}`;
-    } else {
-      newHref = `${prefix}/${href}`;
+      // Should go to .../masa1/
+      newHref = `${baseUrl}${prefix.substring(1)}/`; // remove leading slash from prefix if needed
+      // prefix is "/masa1". substring(1) is "masa1".
+      // result: /KestelYemen/masa1/
+
+      // Fix double slash issues
+      newHref = newHref.replace('//', '/');
+      link.setAttribute('href', newHref);
+      return;
     }
 
-    link.setAttribute('href', newHref);
+    // For other links, if they are relative (./foo.html), DO NOT TOUCH.
+    // The browser resolves ./foo.html relative to current /masa1/ path.
+    // So /KestelYemen/masa1/foo.html. This is what we want (conceptually).
+
+    // If absolute path starting with /
+    if (href.startsWith('/')) {
+      // Convert /nargile.html to /KestelYemen/masa1/nargile.html
+      // Strip leading slash
+      const path = href.substring(1);
+      newHref = `${baseUrl}${prefix.substring(1)}/${path}`;
+      newHref = newHref.replace('//', '/');
+      link.setAttribute('href', newHref);
+    }
   });
 }
 
