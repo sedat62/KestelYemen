@@ -20,7 +20,7 @@
     <nav class="fixed top-0 left-0 right-0 z-50 glass shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="/" class="flex items-center gap-3">
+                <a href="./" class="flex items-center gap-3">
                     <div
                         class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
                         <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -162,13 +162,12 @@
     </footer>
 
     <!-- Cart Sidebar -->
-    <div id="cartSidebar" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="cartOverlay"></div>
-        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300"
-            id="cartPanel">
-            <div class="flex flex-col h-full">
-                <div class="flex items-center justify-between p-6 border-b border-gray-100">
-                    <h3 class="text-xl font-bold text-gray-800">Sepetim</h3>
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-overlay" id="cartOverlay"></div>
+        <div class="cart-panel" id="cartPanel">
+            <div class="h-full flex flex-col">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <h2 class="text-2xl font-bold font-display text-gray-800">Sepetim</h2>
                     <button id="closeCart" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -176,15 +175,17 @@
                         </svg>
                     </button>
                 </div>
-                <div id="cartItems" class="flex-1 overflow-y-auto p-6"></div>
-                <div class="border-t border-gray-100 p-6 bg-gray-50">
-                    <div class="flex justify-between items-center mb-4">
+                <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Cart items will be rendered here -->
+                </div>
+                <div class="p-6 border-t border-gray-100 bg-gray-50">
+                    <div class="flex items-center justify-between mb-4">
                         <span class="text-gray-600">Toplam</span>
-                        <span id="cartTotal" class="text-2xl font-bold text-gray-800">₺0</span>
+                        <span id="cartTotal" class="text-2xl font-bold text-amber-600">₺0</span>
                     </div>
-                    <button id="checkoutBtn"
-                        class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        Sipariş Ver
+                    <button id="checkoutBtn" disabled
+                        class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                        Siparişi Tamamla
                     </button>
                 </div>
             </div>

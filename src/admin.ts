@@ -1,28 +1,28 @@
 import './style.css';
 import { initializeApp } from 'firebase/app';
 import {
-    getFirestore,
-    collection,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    doc,
-    onSnapshot,
-    query,
-    orderBy,
-    Timestamp,
-    setDoc
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  orderBy,
+  Timestamp,
+  setDoc
 } from 'firebase/firestore';
 
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyC1oSP3KPF3FZVEvUv8eBpoMwjmQcWOk-Y",
-    authDomain: "bestofcafe-d3446.firebaseapp.com",
-    projectId: "bestofcafe-d3446",
-    storageBucket: "bestofcafe-d3446.firebasestorage.app",
-    messagingSenderId: "194338847064",
-    appId: "1:194338847064:web:b5d7ec844bc8009ddd8d2d",
-    measurementId: "G-NFF58791TR"
+  apiKey: "AIzaSyC1oSP3KPF3FZVEvUv8eBpoMwjmQcWOk-Y",
+  authDomain: "bestofcafe-d3446.firebaseapp.com",
+  projectId: "bestofcafe-d3446",
+  storageBucket: "bestofcafe-d3446.firebasestorage.app",
+  messagingSenderId: "194338847064",
+  appId: "1:194338847064:web:b5d7ec844bc8009ddd8d2d",
+  measurementId: "G-NFF58791TR"
 };
 
 // Initialize Firebase
@@ -31,52 +31,52 @@ const db = getFirestore(app);
 
 // Types
 interface MenuItem {
-    id?: string;
-    name: string;
-    description: string;
-    price: number;
-    image: string;
-    category: string;
-    type: 'yemek' | 'icecek' | 'nargile';
-    popular?: boolean;
+  id?: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  type: 'yemek' | 'icecek' | 'nargile';
+  popular?: boolean;
 }
 
 interface OrderItem {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    total: number;
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  total: number;
 }
 
 interface Order {
-    id?: string;
-    customerName: string;
-    tableNumber: string;
-    notes?: string;
-    items: OrderItem[];
-    total: number;
-    status: 'pending' | 'preparing' | 'completed' | 'cancelled';
-    createdAt: Timestamp;
+  id?: string;
+  customerName: string;
+  tableNumber: string;
+  notes?: string;
+  items: OrderItem[];
+  total: number;
+  status: 'pending' | 'preparing' | 'completed' | 'cancelled';
+  createdAt: Timestamp;
 }
 
 interface SiteSettings {
-    maintenanceMode: boolean;
-    cafeName: string;
-    cafePhone: string;
-    cafeAddress: string;
-    tableCount: number;
+  maintenanceMode: boolean;
+  cafeName: string;
+  cafePhone: string;
+  cafeAddress: string;
+  tableCount: number;
 }
 
 // State
 let orders: Order[] = [];
 let menuItems: MenuItem[] = [];
 let settings: SiteSettings = {
-    maintenanceMode: false,
-    cafeName: 'Best of Cafe',
-    cafePhone: '+90 (555) 123 45 67',
-    cafeAddress: 'İstanbul, Türkiye',
-    tableCount: 8
+  maintenanceMode: false,
+  cafeName: 'Best of Cafe',
+  cafePhone: '+90 (555) 123 45 67',
+  cafeAddress: 'İstanbul, Türkiye',
+  tableCount: 8
 };
 let currentOrderId: string | null = null;
 let editingMenuItemId: string | null = null;
@@ -95,39 +95,39 @@ const menuItemModal = document.getElementById('menuItemModal');
 
 // Tab Navigation
 function switchTab(tabName: 'orders' | 'menu' | 'settings') {
-    // Update tab buttons
-    document.querySelectorAll('.admin-tab').forEach(tab => {
-        tab.classList.remove('border-amber-500', 'text-amber-600');
-        tab.classList.add('border-transparent', 'text-gray-500');
-    });
+  // Update tab buttons
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.classList.remove('border-amber-500', 'text-amber-600');
+    tab.classList.add('border-transparent', 'text-gray-500');
+  });
 
-    const activeTab = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
-    activeTab?.classList.remove('border-transparent', 'text-gray-500');
-    activeTab?.classList.add('border-amber-500', 'text-amber-600');
+  const activeTab = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+  activeTab?.classList.remove('border-transparent', 'text-gray-500');
+  activeTab?.classList.add('border-amber-500', 'text-amber-600');
 
-    // Update content
-    ordersContent?.classList.add('hidden');
-    menuContent?.classList.add('hidden');
-    settingsContent?.classList.add('hidden');
+  // Update content
+  ordersContent?.classList.add('hidden');
+  menuContent?.classList.add('hidden');
+  settingsContent?.classList.add('hidden');
 
-    if (tabName === 'orders') ordersContent?.classList.remove('hidden');
-    if (tabName === 'menu') menuContent?.classList.remove('hidden');
-    if (tabName === 'settings') settingsContent?.classList.remove('hidden');
+  if (tabName === 'orders') ordersContent?.classList.remove('hidden');
+  if (tabName === 'menu') menuContent?.classList.remove('hidden');
+  if (tabName === 'settings') settingsContent?.classList.remove('hidden');
 }
 
 // Render Tables
 function renderTables() {
-    if (!tablesGrid) return;
+  if (!tablesGrid) return;
 
-    const tableCount = settings.tableCount || 8;
-    let html = '';
+  const tableCount = settings.tableCount || 8;
+  let html = '';
 
-    for (let i = 1; i <= tableCount; i++) {
-        const tableOrders = orders.filter(o => o.tableNumber === String(i) && o.status === 'pending');
-        const hasOrders = tableOrders.length > 0;
-        const totalAmount = tableOrders.reduce((sum, o) => sum + o.total, 0);
+  for (let i = 1; i <= tableCount; i++) {
+    const tableOrders = orders.filter(o => o.tableNumber === String(i) && o.status === 'pending');
+    const hasOrders = tableOrders.length > 0;
+    const totalAmount = tableOrders.reduce((sum, o) => sum + o.total, 0);
 
-        html += `
+    html += `
       <div class="bg-white rounded-2xl p-6 shadow-sm cursor-pointer hover:shadow-md transition-shadow ${hasOrders ? 'ring-2 ring-orange-400' : ''}" 
            onclick="openTableOrders(${i})">
         <div class="flex items-center justify-between mb-4">
@@ -149,30 +149,30 @@ function renderTables() {
         `}
       </div>
     `;
-    }
+  }
 
-    tablesGrid.innerHTML = html;
+  tablesGrid.innerHTML = html;
 }
 
 // Open Table Orders Modal
 function openTableOrders(tableNumber: number) {
-    const tableOrders = orders.filter(o => o.tableNumber === String(tableNumber) && o.status === 'pending');
+  const tableOrders = orders.filter(o => o.tableNumber === String(tableNumber) && o.status === 'pending');
 
-    if (tableOrders.length === 0) {
-        showToast(`Masa ${tableNumber}'de bekleyen sipariş yok`, 'info');
-        return;
-    }
+  if (tableOrders.length === 0) {
+    showToast(`Masa ${tableNumber}'de bekleyen sipariş yok`, 'info');
+    return;
+  }
 
-    const order = tableOrders[0];
-    currentOrderId = order.id || null;
+  const order = tableOrders[0];
+  currentOrderId = order.id || null;
 
-    const modalTitle = document.getElementById('orderModalTitle');
-    const orderDetailContent = document.getElementById('orderDetailContent');
+  const modalTitle = document.getElementById('orderModalTitle');
+  const orderDetailContent = document.getElementById('orderDetailContent');
 
-    if (modalTitle) modalTitle.textContent = `Masa ${tableNumber} - Sipariş Detayı`;
+  if (modalTitle) modalTitle.textContent = `Masa ${tableNumber} - Sipariş Detayı`;
 
-    if (orderDetailContent) {
-        orderDetailContent.innerHTML = `
+  if (orderDetailContent) {
+    orderDetailContent.innerHTML = `
       <div class="mb-4">
         <p class="text-sm text-gray-500">Müşteri</p>
         <p class="font-semibold text-gray-800">${order.customerName}</p>
@@ -202,69 +202,69 @@ function openTableOrders(tableNumber: number) {
         <span class="text-xs text-gray-400">${formatDate(order.createdAt)}</span>
       </div>
     `;
-    }
+  }
 
-    orderDetailModal?.classList.remove('hidden');
+  orderDetailModal?.classList.remove('hidden');
 }
 
 // Format Date
 function formatDate(timestamp: Timestamp): string {
-    if (!timestamp) return '';
-    const date = timestamp.toDate();
-    return date.toLocaleString('tr-TR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+  if (!timestamp) return '';
+  const date = timestamp.toDate();
+  return date.toLocaleString('tr-TR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
 // Complete Order
 async function completeOrder() {
-    if (!currentOrderId) return;
+  if (!currentOrderId) return;
 
-    try {
-        await updateDoc(doc(db, 'orders', currentOrderId), { status: 'completed' });
-        showToast('Sipariş tamamlandı!');
-        closeOrderModal();
-    } catch (error) {
-        console.error('Error completing order:', error);
-        showToast('Sipariş tamamlanırken hata oluştu!', 'error');
-    }
+  try {
+    await updateDoc(doc(db, 'orders', currentOrderId), { status: 'completed' });
+    showToast('Sipariş tamamlandı!');
+    closeOrderModal();
+  } catch (error) {
+    console.error('Error completing order:', error);
+    showToast('Sipariş tamamlanırken hata oluştu!', 'error');
+  }
 }
 
 // Cancel Order
 async function cancelOrder() {
-    if (!currentOrderId) return;
+  if (!currentOrderId) return;
 
-    try {
-        await updateDoc(doc(db, 'orders', currentOrderId), { status: 'cancelled' });
-        showToast('Sipariş iptal edildi!');
-        closeOrderModal();
-    } catch (error) {
-        console.error('Error cancelling order:', error);
-        showToast('Sipariş iptal edilirken hata oluştu!', 'error');
-    }
+  try {
+    await updateDoc(doc(db, 'orders', currentOrderId), { status: 'cancelled' });
+    showToast('Sipariş iptal edildi!');
+    closeOrderModal();
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    showToast('Sipariş iptal edilirken hata oluştu!', 'error');
+  }
 }
 
 // Close Order Modal
 function closeOrderModal() {
-    orderDetailModal?.classList.add('hidden');
-    currentOrderId = null;
+  orderDetailModal?.classList.add('hidden');
+  currentOrderId = null;
 }
 
 // Render Menu Items
 function renderMenuItems(filter: string = 'all') {
-    if (!menuItemsList) return;
+  if (!menuItemsList) return;
 
-    let items = menuItems;
-    if (filter !== 'all') {
-        items = menuItems.filter(item => item.type === filter);
-    }
+  let items = menuItems;
+  if (filter !== 'all') {
+    items = menuItems.filter(item => item.type === filter);
+  }
 
-    if (items.length === 0) {
-        menuItemsList.innerHTML = `
+  if (items.length === 0) {
+    menuItemsList.innerHTML = `
       <div class="p-12 text-center text-gray-500">
         <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -272,10 +272,10 @@ function renderMenuItems(filter: string = 'all') {
         <p>Henüz menü ürünü eklenmemiş</p>
       </div>
     `;
-        return;
-    }
+    return;
+  }
 
-    menuItemsList.innerHTML = `
+  menuItemsList.innerHTML = `
     <table class="w-full">
       <thead class="bg-gray-50">
         <tr>
@@ -300,9 +300,9 @@ function renderMenuItems(filter: string = 'all') {
             </td>
             <td class="px-6 py-4">
               <span class="px-2 py-1 text-xs font-medium rounded-full ${item.type === 'yemek' ? 'bg-amber-100 text-amber-700' :
-            item.type === 'icecek' ? 'bg-blue-100 text-blue-700' :
-                'bg-purple-100 text-purple-700'
-        }">${item.type === 'yemek' ? 'Yemek' : item.type === 'icecek' ? 'İçecek' : 'Nargile'}</span>
+      item.type === 'icecek' ? 'bg-blue-100 text-blue-700' :
+        'bg-purple-100 text-purple-700'
+    }">${item.type === 'yemek' ? 'Yemek' : item.type === 'icecek' ? 'İçecek' : 'Nargile'}</span>
             </td>
             <td class="px-6 py-4 font-semibold text-gray-800">₺${item.price}</td>
             <td class="px-6 py-4">
@@ -329,267 +329,280 @@ function renderMenuItems(filter: string = 'all') {
 
 // Open Add Menu Item Modal
 function openAddMenuItemModal() {
-    editingMenuItemId = null;
-    const modalTitle = document.getElementById('menuModalTitle');
-    if (modalTitle) modalTitle.textContent = 'Yeni Ürün Ekle';
+  editingMenuItemId = null;
+  const modalTitle = document.getElementById('menuModalTitle');
+  if (modalTitle) modalTitle.textContent = 'Yeni Ürün Ekle';
 
-    // Reset form
-    (document.getElementById('menuItemName') as HTMLInputElement).value = '';
-    (document.getElementById('menuItemDesc') as HTMLTextAreaElement).value = '';
-    (document.getElementById('menuItemPrice') as HTMLInputElement).value = '';
-    (document.getElementById('menuItemType') as HTMLSelectElement).value = 'yemek';
-    (document.getElementById('menuItemCategory') as HTMLInputElement).value = '';
-    (document.getElementById('menuItemImage') as HTMLInputElement).value = '';
-    (document.getElementById('menuItemPopular') as HTMLInputElement).checked = false;
+  // Reset form
+  (document.getElementById('menuItemName') as HTMLInputElement).value = '';
+  (document.getElementById('menuItemDesc') as HTMLTextAreaElement).value = '';
+  (document.getElementById('menuItemPrice') as HTMLInputElement).value = '';
+  (document.getElementById('menuItemType') as HTMLSelectElement).value = 'yemek';
+  (document.getElementById('menuItemCategory') as HTMLInputElement).value = '';
+  (document.getElementById('menuItemImage') as HTMLInputElement).value = '';
+  (document.getElementById('menuItemPopular') as HTMLInputElement).checked = false;
 
-    menuItemModal?.classList.remove('hidden');
+  menuItemModal?.classList.remove('hidden');
 }
 
 // Edit Menu Item
 function editMenuItem(id: string) {
-    const item = menuItems.find(i => i.id === id);
-    if (!item) return;
+  const item = menuItems.find(i => i.id === id);
+  if (!item) return;
 
-    editingMenuItemId = id;
-    const modalTitle = document.getElementById('menuModalTitle');
-    if (modalTitle) modalTitle.textContent = 'Ürünü Düzenle';
+  editingMenuItemId = id;
+  const modalTitle = document.getElementById('menuModalTitle');
+  if (modalTitle) modalTitle.textContent = 'Ürünü Düzenle';
 
-    (document.getElementById('menuItemName') as HTMLInputElement).value = item.name;
-    (document.getElementById('menuItemDesc') as HTMLTextAreaElement).value = item.description;
-    (document.getElementById('menuItemPrice') as HTMLInputElement).value = String(item.price);
-    (document.getElementById('menuItemType') as HTMLSelectElement).value = item.type;
-    (document.getElementById('menuItemCategory') as HTMLInputElement).value = item.category;
-    (document.getElementById('menuItemImage') as HTMLInputElement).value = item.image;
-    (document.getElementById('menuItemPopular') as HTMLInputElement).checked = item.popular || false;
+  (document.getElementById('menuItemName') as HTMLInputElement).value = item.name;
+  (document.getElementById('menuItemDesc') as HTMLTextAreaElement).value = item.description;
+  (document.getElementById('menuItemPrice') as HTMLInputElement).value = String(item.price);
+  (document.getElementById('menuItemType') as HTMLSelectElement).value = item.type;
+  (document.getElementById('menuItemCategory') as HTMLInputElement).value = item.category;
+  (document.getElementById('menuItemImage') as HTMLInputElement).value = item.image;
+  (document.getElementById('menuItemPopular') as HTMLInputElement).checked = item.popular || false;
 
-    menuItemModal?.classList.remove('hidden');
+  menuItemModal?.classList.remove('hidden');
 }
 
 // Delete Menu Item
 async function deleteMenuItem(id: string) {
-    if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
+  if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
 
-    try {
-        await deleteDoc(doc(db, 'menuItems', id));
-        showToast('Ürün silindi!');
-    } catch (error) {
-        console.error('Error deleting menu item:', error);
-        showToast('Ürün silinirken hata oluştu!', 'error');
-    }
+  try {
+    await deleteDoc(doc(db, 'menuItems', id));
+    showToast('Ürün silindi!');
+  } catch (error) {
+    console.error('Error deleting menu item:', error);
+    showToast('Ürün silinirken hata oluştu!', 'error');
+  }
 }
 
 // Save Menu Item
 async function saveMenuItem(e: Event) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const itemData: MenuItem = {
-        name: (document.getElementById('menuItemName') as HTMLInputElement).value,
-        description: (document.getElementById('menuItemDesc') as HTMLTextAreaElement).value,
-        price: Number((document.getElementById('menuItemPrice') as HTMLInputElement).value),
-        type: (document.getElementById('menuItemType') as HTMLSelectElement).value as 'yemek' | 'icecek' | 'nargile',
-        category: (document.getElementById('menuItemCategory') as HTMLInputElement).value,
-        image: (document.getElementById('menuItemImage') as HTMLInputElement).value || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80',
-        popular: (document.getElementById('menuItemPopular') as HTMLInputElement).checked
-    };
+  const itemData: MenuItem = {
+    name: (document.getElementById('menuItemName') as HTMLInputElement).value,
+    description: (document.getElementById('menuItemDesc') as HTMLTextAreaElement).value,
+    price: Number((document.getElementById('menuItemPrice') as HTMLInputElement).value),
+    type: (document.getElementById('menuItemType') as HTMLSelectElement).value as 'yemek' | 'icecek' | 'nargile',
+    category: (document.getElementById('menuItemCategory') as HTMLInputElement).value,
+    image: (document.getElementById('menuItemImage') as HTMLInputElement).value || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80',
+    popular: (document.getElementById('menuItemPopular') as HTMLInputElement).checked
+  };
 
-    try {
-        if (editingMenuItemId) {
-            await updateDoc(doc(db, 'menuItems', editingMenuItemId), itemData as any);
-            showToast('Ürün güncellendi!');
-        } else {
-            await addDoc(collection(db, 'menuItems'), itemData);
-            showToast('Ürün eklendi!');
-        }
-        closeMenuItemModal();
-    } catch (error) {
-        console.error('Error saving menu item:', error);
-        showToast('Ürün kaydedilirken hata oluştu!', 'error');
+  try {
+    if (editingMenuItemId) {
+      await updateDoc(doc(db, 'menuItems', editingMenuItemId), itemData as any);
+      showToast('Ürün güncellendi!');
+    } else {
+      await addDoc(collection(db, 'menuItems'), itemData);
+      showToast('Ürün eklendi!');
     }
+    closeMenuItemModal();
+  } catch (error) {
+    console.error('Error saving menu item:', error);
+    showToast('Ürün kaydedilirken hata oluştu!', 'error');
+  }
 }
 
 // Close Menu Item Modal
 function closeMenuItemModal() {
-    menuItemModal?.classList.add('hidden');
-    editingMenuItemId = null;
+  menuItemModal?.classList.add('hidden');
+  editingMenuItemId = null;
 }
 
 // Update Stats
 function updateStats() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    const todayOrders = orders.filter(o => {
-        if (!o.createdAt) return false;
-        const orderDate = o.createdAt.toDate();
-        return orderDate >= today;
-    });
+  const todayOrders = orders.filter(o => {
+    if (!o.createdAt) return false;
+    const orderDate = o.createdAt.toDate();
+    return orderDate >= today;
+  });
 
-    const pendingOrders = orders.filter(o => o.status === 'pending');
-    const completedTodayOrders = todayOrders.filter(o => o.status === 'completed');
-    const todayRevenue = completedTodayOrders.reduce((sum, o) => sum + o.total, 0);
+  const pendingOrders = orders.filter(o => o.status === 'pending');
+  const completedTodayOrders = todayOrders.filter(o => o.status === 'completed');
+  const todayRevenue = completedTodayOrders.reduce((sum, o) => sum + o.total, 0);
 
-    document.getElementById('todayOrders')!.textContent = String(todayOrders.length);
-    document.getElementById('pendingOrders')!.textContent = String(pendingOrders.length);
-    document.getElementById('todayRevenue')!.textContent = `₺${todayRevenue}`;
-    document.getElementById('totalMenuItems')!.textContent = String(menuItems.length);
+  document.getElementById('todayOrders')!.textContent = String(todayOrders.length);
+  document.getElementById('pendingOrders')!.textContent = String(pendingOrders.length);
+  document.getElementById('todayRevenue')!.textContent = `₺${todayRevenue}`;
+  document.getElementById('totalMenuItems')!.textContent = String(menuItems.length);
 }
 
 // Save Settings
 async function saveSettings() {
-    const newSettings: SiteSettings = {
-        maintenanceMode: (document.getElementById('maintenanceToggle') as HTMLInputElement).checked,
-        cafeName: (document.getElementById('cafeName') as HTMLInputElement).value,
-        cafePhone: (document.getElementById('cafePhone') as HTMLInputElement).value,
-        cafeAddress: (document.getElementById('cafeAddress') as HTMLInputElement).value,
-        tableCount: Number((document.getElementById('tableCount') as HTMLInputElement).value)
-    };
+  const newSettings: SiteSettings = {
+    maintenanceMode: (document.getElementById('maintenanceToggle') as HTMLInputElement).checked,
+    cafeName: (document.getElementById('cafeName') as HTMLInputElement).value,
+    cafePhone: (document.getElementById('cafePhone') as HTMLInputElement).value,
+    cafeAddress: (document.getElementById('cafeAddress') as HTMLInputElement).value,
+    tableCount: Number((document.getElementById('tableCount') as HTMLInputElement).value)
+  };
 
-    try {
-        await setDoc(doc(db, 'settings', 'site'), newSettings);
-        settings = newSettings;
-        updateMaintenanceStatus();
-        renderTables();
-        showToast('Ayarlar kaydedildi!');
-    } catch (error) {
-        console.error('Error saving settings:', error);
-        showToast('Ayarlar kaydedilirken hata oluştu!', 'error');
-    }
+  try {
+    await setDoc(doc(db, 'settings', 'site'), newSettings);
+    settings = newSettings;
+    updateMaintenanceStatus();
+    renderTables();
+    showToast('Ayarlar kaydedildi!');
+  } catch (error) {
+    console.error('Error saving settings:', error);
+    showToast('Ayarlar kaydedilirken hata oluştu!', 'error');
+  }
 }
 
 // Update Maintenance Status
 function updateMaintenanceStatus() {
-    const statusEl = document.getElementById('maintenanceStatus');
-    const warningEl = document.getElementById('maintenanceWarning');
+  const statusEl = document.getElementById('maintenanceStatus');
+  const warningEl = document.getElementById('maintenanceWarning');
 
-    if (settings.maintenanceMode) {
-        if (statusEl) {
-            statusEl.innerHTML = `
+  if (settings.maintenanceMode) {
+    if (statusEl) {
+      statusEl.innerHTML = `
         <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
         <span class="text-red-400">Bakımda</span>
       `;
-        }
-        warningEl?.classList.remove('hidden');
-    } else {
-        if (statusEl) {
-            statusEl.innerHTML = `
+    }
+    warningEl?.classList.remove('hidden');
+  } else {
+    if (statusEl) {
+      statusEl.innerHTML = `
         <span class="w-2 h-2 rounded-full bg-green-500"></span>
         <span>Site Aktif</span>
       `;
-        }
-        warningEl?.classList.add('hidden');
     }
+    warningEl?.classList.add('hidden');
+  }
 }
 
 // Show Toast
 function showToast(message: string, type: 'success' | 'error' | 'info' = 'success') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
 
-    const bgColor = type === 'error' ? 'bg-red-600' : type === 'info' ? 'bg-blue-600' : 'bg-gray-800';
-    const toast = document.createElement('div');
-    toast.className = `toast flex items-center gap-3 ${bgColor}`;
-    toast.innerHTML = `
+  const bgColor = type === 'error' ? 'bg-red-600' : type === 'info' ? 'bg-blue-600' : 'bg-gray-800';
+  const toast = document.createElement('div');
+  toast.className = `toast flex items-center gap-3 ${bgColor}`;
+  toast.innerHTML = `
     ${type === 'success' ?
-            '<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
-            type === 'error' ?
-                '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' :
-                '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
-        }
+      '<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
+      type === 'error' ?
+        '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' :
+        '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+    }
     <span>${message}</span>
   `;
 
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
 }
 
 // Initialize Firebase Listeners
 function initFirebaseListeners() {
-    // Listen to orders
-    const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-    onSnapshot(ordersQuery, (snapshot) => {
-        orders = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        })) as Order[];
-        renderTables();
-        updateStats();
-    });
+  // Listen to orders
+  const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+  onSnapshot(ordersQuery, (snapshot) => {
+    orders = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Order[];
+    renderTables();
+    updateStats();
+  });
 
-    // Listen to menu items
-    onSnapshot(collection(db, 'menuItems'), (snapshot) => {
-        menuItems = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        })) as MenuItem[];
-        renderMenuItems();
-        updateStats();
-    });
+  // Listen to menu items
+  onSnapshot(collection(db, 'menuItems'), (snapshot) => {
+    menuItems = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as MenuItem[];
+    renderMenuItems();
+    updateStats();
+  });
 
-    // Listen to settings
-    onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
-        if (snapshot.exists()) {
-            settings = snapshot.data() as SiteSettings;
-            (document.getElementById('maintenanceToggle') as HTMLInputElement).checked = settings.maintenanceMode;
-            (document.getElementById('cafeName') as HTMLInputElement).value = settings.cafeName;
-            (document.getElementById('cafePhone') as HTMLInputElement).value = settings.cafePhone;
-            (document.getElementById('cafeAddress') as HTMLInputElement).value = settings.cafeAddress;
-            (document.getElementById('tableCount') as HTMLInputElement).value = String(settings.tableCount);
-            updateMaintenanceStatus();
-            renderTables();
-        }
-    });
+  // Listen to settings
+  onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
+    if (snapshot.exists()) {
+      settings = snapshot.data() as SiteSettings;
+      (document.getElementById('maintenanceToggle') as HTMLInputElement).checked = settings.maintenanceMode;
+      (document.getElementById('cafeName') as HTMLInputElement).value = settings.cafeName;
+      (document.getElementById('cafePhone') as HTMLInputElement).value = settings.cafePhone;
+      (document.getElementById('cafeAddress') as HTMLInputElement).value = settings.cafeAddress;
+      (document.getElementById('tableCount') as HTMLInputElement).value = String(settings.tableCount);
+      updateMaintenanceStatus();
+      renderTables();
+    }
+  });
 }
 
 // Initialize
 function init() {
-    // Tab Navigation
-    tabOrders?.addEventListener('click', () => switchTab('orders'));
-    tabMenu?.addEventListener('click', () => switchTab('menu'));
-    tabSettings?.addEventListener('click', () => switchTab('settings'));
+  // Tab Navigation
+  tabOrders?.addEventListener('click', () => switchTab('orders'));
+  tabMenu?.addEventListener('click', () => switchTab('menu'));
+  tabSettings?.addEventListener('click', () => switchTab('settings'));
 
-    // Order Modal
-    document.getElementById('closeOrderModal')?.addEventListener('click', closeOrderModal);
-    document.getElementById('completeOrderBtn')?.addEventListener('click', completeOrder);
-    document.getElementById('cancelOrderBtn')?.addEventListener('click', cancelOrder);
-    orderDetailModal?.addEventListener('click', (e) => {
-        if (e.target === orderDetailModal) closeOrderModal();
+  // Order Modal
+  document.getElementById('closeOrderModal')?.addEventListener('click', closeOrderModal);
+  document.getElementById('completeOrderBtn')?.addEventListener('click', completeOrder);
+  document.getElementById('cancelOrderBtn')?.addEventListener('click', cancelOrder);
+  orderDetailModal?.addEventListener('click', (e) => {
+    if (e.target === orderDetailModal) closeOrderModal();
+  });
+
+  // Menu Item Modal
+  document.getElementById('addMenuItemBtn')?.addEventListener('click', openAddMenuItemModal);
+  document.getElementById('cancelMenuItemBtn')?.addEventListener('click', closeMenuItemModal);
+  document.getElementById('menuItemForm')?.addEventListener('submit', saveMenuItem);
+  menuItemModal?.addEventListener('click', (e) => {
+    if (e.target === menuItemModal) closeMenuItemModal();
+  });
+
+  // Menu Filters
+  document.querySelectorAll('.menu-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.menu-filter').forEach(b => {
+        b.classList.remove('bg-amber-500', 'text-white');
+        b.classList.add('bg-gray-100', 'text-gray-600');
+      });
+      btn.classList.remove('bg-gray-100', 'text-gray-600');
+      btn.classList.add('bg-amber-500', 'text-white');
+      renderMenuItems(btn.getAttribute('data-filter') || 'all');
     });
+  });
 
-    // Menu Item Modal
-    document.getElementById('addMenuItemBtn')?.addEventListener('click', openAddMenuItemModal);
-    document.getElementById('cancelMenuItemBtn')?.addEventListener('click', closeMenuItemModal);
-    document.getElementById('menuItemForm')?.addEventListener('submit', saveMenuItem);
-    menuItemModal?.addEventListener('click', (e) => {
-        if (e.target === menuItemModal) closeMenuItemModal();
-    });
+  // Settings
+  document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
+  document.getElementById('maintenanceToggle')?.addEventListener('change', async () => {
+    const isChecked = (document.getElementById('maintenanceToggle') as HTMLInputElement).checked;
+    settings.maintenanceMode = isChecked;
+    updateMaintenanceStatus();
 
-    // Menu Filters
-    document.querySelectorAll('.menu-filter').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.menu-filter').forEach(b => {
-                b.classList.remove('bg-amber-500', 'text-white');
-                b.classList.add('bg-gray-100', 'text-gray-600');
-            });
-            btn.classList.remove('bg-gray-100', 'text-gray-600');
-            btn.classList.add('bg-amber-500', 'text-white');
-            renderMenuItems(btn.getAttribute('data-filter') || 'all');
-        });
-    });
+    // Auto-save maintenance mode
+    try {
+      await updateDoc(doc(db, 'settings', 'site'), { maintenanceMode: isChecked });
+      showToast('Bakım modu güncellendi!');
+    } catch (error) {
+      console.error('Error saving maintenance mode:', error);
+      showToast('Bakım modu güncellenirken hata oluştu!', 'error');
+      // Revert changes on UI if failed (optional but good practice)
+      (document.getElementById('maintenanceToggle') as HTMLInputElement).checked = !isChecked;
+      settings.maintenanceMode = !isChecked;
+      updateMaintenanceStatus();
+    }
+  });
 
-    // Settings
-    document.getElementById('saveSettingsBtn')?.addEventListener('click', saveSettings);
-    document.getElementById('maintenanceToggle')?.addEventListener('change', () => {
-        const isChecked = (document.getElementById('maintenanceToggle') as HTMLInputElement).checked;
-        settings.maintenanceMode = isChecked;
-        updateMaintenanceStatus();
-    });
+  // Initialize Firebase Listeners
+  initFirebaseListeners();
 
-    // Initialize Firebase Listeners
-    initFirebaseListeners();
-
-    // Initial Render
-    renderTables();
-    updateStats();
+  // Initial Render
+  renderTables();
+  updateStats();
 }
 
 // Make functions globally available

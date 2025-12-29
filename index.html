@@ -21,7 +21,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-20">
         <!-- Logo -->
-        <a href="/" class="flex items-center gap-3">
+        <a href="./" class="flex items-center gap-3">
           <div
             class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
             <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
             </svg>
           </div>
           <div>
-            <h1 class="text-xl font-bold text-gray-800 font-display">Best of Cafe</h1>
+            <h1 id="headerBrand" class="text-xl font-bold text-gray-800 font-display">Best of Cafe</h1>
             <p class="text-xs text-amber-600 font-medium">Lezzet Durağınız</p>
           </div>
         </a>
@@ -111,7 +111,7 @@
         <!-- Main Title -->
         <h1 class="text-5xl md:text-7xl font-bold text-gray-800 mb-6 font-display animate-fade-in-up">
           <span class="block">Hoş Geldiniz</span>
-          <span class="gradient-text">Best of Cafe</span>
+          <span id="heroBrand" class="gradient-text">Best of Cafe</span>
         </h1>
 
         <!-- Subtitle -->
@@ -177,7 +177,7 @@
       <!-- Category Cards -->
       <div class="grid md:grid-cols-3 gap-8">
         <!-- Yemekler -->
-        <a href="/yemekler.html" class="category-card group block h-96 card-hover">
+        <a href="./yemekler.html" class="category-card group block h-96 card-hover">
           <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" alt="Yemekler"
             class="absolute inset-0 w-full h-full object-cover">
           <div class="absolute inset-0 z-10 flex flex-col justify-end p-8">
@@ -198,7 +198,7 @@
         </a>
 
         <!-- İçecekler -->
-        <a href="/icecekler.html" class="category-card group block h-96 card-hover">
+        <a href="./icecekler.html" class="category-card group block h-96 card-hover">
           <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80" alt="İçecekler"
             class="absolute inset-0 w-full h-full object-cover">
           <div class="absolute inset-0 z-10 flex flex-col justify-end p-8">
@@ -219,7 +219,7 @@
         </a>
 
         <!-- Nargile -->
-        <a href="/nargile.html" class="category-card group block h-96 card-hover">
+        <a href="./nargile.html" class="category-card group block h-96 card-hover">
           <img src="https://images.unsplash.com/photo-1527661591475-527312dd65f5?w=600&q=80" alt="Nargile"
             class="absolute inset-0 w-full h-full object-cover">
           <div class="absolute inset-0 z-10 flex flex-col justify-end p-8">
@@ -327,7 +327,7 @@
               </svg>
             </div>
             <div>
-              <h3 class="text-xl font-bold font-display">Best of Cafe</h3>
+              <h3 id="footerBrand" class="text-xl font-bold font-display">Best of Cafe</h3>
               <p class="text-amber-500 text-sm">Lezzet Durağınız</p>
             </div>
           </div>
@@ -362,11 +362,11 @@
         <div>
           <h4 class="text-lg font-semibold mb-6">Hızlı Linkler</h4>
           <ul class="space-y-3">
-            <li><a href="/" class="text-gray-400 hover:text-amber-500 transition-colors">Ana Sayfa</a></li>
-            <li><a href="/yemekler.html" class="text-gray-400 hover:text-amber-500 transition-colors">Yemekler</a></li>
-            <li><a href="/icecekler.html" class="text-gray-400 hover:text-amber-500 transition-colors">İçecekler</a>
+            <li><a href="./" class="text-gray-400 hover:text-amber-500 transition-colors">Ana Sayfa</a></li>
+            <li><a href="./yemekler.html" class="text-gray-400 hover:text-amber-500 transition-colors">Yemekler</a></li>
+            <li><a href="./icecekler.html" class="text-gray-400 hover:text-amber-500 transition-colors">İçecekler</a>
             </li>
-            <li><a href="/nargile.html" class="text-gray-400 hover:text-amber-500 transition-colors">Nargile</a></li>
+            <li><a href="./nargile.html" class="text-gray-400 hover:text-amber-500 transition-colors">Nargile</a></li>
           </ul>
         </div>
 
@@ -381,14 +381,15 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span>İstanbul, Türkiye</span>
+              <span id="footerAddress">İstanbul, Türkiye</span>
             </li>
             <li class="flex items-center gap-3">
               <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
               </svg>
-              <span>+90 (555) 123 45 67</span>
+              </svg>
+              <span id="footerPhone">+90 (555) 123 45 67</span>
             </li>
             <li class="flex items-center gap-3">
               <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -402,42 +403,35 @@
       </div>
 
       <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500 text-sm">
-        <p>&copy; 2024 Best of Cafe. Tüm hakları saklıdır.</p>
+        <p id="footerCopyright">&copy; 2024 Best of Cafe. Tüm hakları saklıdır.</p>
       </div>
     </div>
   </footer>
 
   <!-- Cart Sidebar -->
-  <div id="cartSidebar" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="cartOverlay"></div>
-    <div
-      class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300"
-      id="cartPanel">
-      <div class="flex flex-col h-full">
-        <!-- Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-100">
-          <h3 class="text-xl font-bold text-gray-800">Sepetim</h3>
+  <div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-panel" id="cartPanel">
+      <div class="h-full flex flex-col">
+        <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+          <h2 class="text-2xl font-bold font-display text-gray-800">Sepetim</h2>
           <button id="closeCart" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-
-        <!-- Cart Items -->
-        <div id="cartItems" class="flex-1 overflow-y-auto p-6">
+        <div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-4">
           <!-- Cart items will be rendered here -->
         </div>
-
-        <!-- Footer -->
-        <div class="border-t border-gray-100 p-6 bg-gray-50">
-          <div class="flex justify-between items-center mb-4">
+        <div class="p-6 border-t border-gray-100 bg-gray-50">
+          <div class="flex items-center justify-between mb-4">
             <span class="text-gray-600">Toplam</span>
-            <span id="cartTotal" class="text-2xl font-bold text-gray-800">₺0</span>
+            <span id="cartTotal" class="text-2xl font-bold text-amber-600">₺0</span>
           </div>
-          <button id="checkoutBtn"
-            class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-4 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-            Sipariş Ver
+          <button id="checkoutBtn" disabled
+            class="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            Siparişi Tamamla
           </button>
         </div>
       </div>
@@ -473,7 +467,7 @@
             class="flex-1 py-3 border border-gray-200 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-colors">
             İptal
           </button>
-          <button type="submit"
+          <button type="submit" id="confirmOrderBtn"
             class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl font-medium hover:shadow-lg transition-all">
             Siparişi Onayla
           </button>

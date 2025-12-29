@@ -1,6 +1,6 @@
 import './style.css';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, serverTimestamp, doc, onSnapshot } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, serverTimestamp, doc, onSnapshot, getDocs, setDoc } from 'firebase/firestore';
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -33,8 +33,8 @@ interface CartItem extends MenuItem {
   quantity: number;
 }
 
-// Sample Menu Data
-const menuData: MenuItem[] = [
+// Sample Menu Data (For Migration)
+const initialMenuData: MenuItem[] = [
   // Yemekler
   { id: 'y1', name: 'Serpme Kahvaltı', description: 'Zengin kahvaltı tabağı, peynir çeşitleri, bal, tereyağı', price: 280, image: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&q=80', category: 'kahvalti', type: 'yemek', popular: true },
   { id: 'y2', name: 'Menemen', description: 'Domates, biber ve yumurta ile hazırlanan geleneksel lezzet', price: 65, image: 'https://images.unsplash.com/photo-1590412200988-a436970781fa?w=400&q=80', category: 'kahvalti', type: 'yemek' },
@@ -85,32 +85,41 @@ const menuData: MenuItem[] = [
   { id: 'n14', name: 'Dubai Nights', description: 'Premium özel karışım', price: 200, image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80', category: 'ozel', type: 'nargile' },
 ];
 
+let menuData: MenuItem[] = [];
+
 // Cart State
 let cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
 
 // DOM Elements
-const cartBtn = document.getElementById('cartBtn');
-const cartBadge = document.getElementById('cartBadge');
-const cartSidebar = document.getElementById('cartSidebar');
-const cartPanel = document.getElementById('cartPanel');
-const cartOverlay = document.getElementById('cartOverlay');
-const closeCart = document.getElementById('closeCart');
-const cartItems = document.getElementById('cartItems');
-const cartTotal = document.getElementById('cartTotal');
-const checkoutBtn = document.getElementById('checkoutBtn');
-const orderModal = document.getElementById('orderModal');
-const orderForm = document.getElementById('orderForm') as HTMLFormElement;
-const cancelOrder = document.getElementById('cancelOrder');
-const menuGrid = document.getElementById('menuGrid');
-const popularItems = document.getElementById('popularItems');
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
-const tableNumberInput = document.getElementById('tableNumberInput') as HTMLInputElement;
-const tableNumberDisplay = document.getElementById('tableNumberDisplay');
-const tableBadge = document.getElementById('tableBadge');
+// DOM Elements
+let cartBtn: HTMLElement | null;
+let cartBadge: HTMLElement | null;
+let cartSidebar: HTMLElement | null;
+let cartOverlay: HTMLElement | null;
+let closeCart: HTMLElement | null;
+let cartItems: HTMLElement | null;
+let cartTotal: HTMLElement | null;
+let checkoutBtn: HTMLElement | null;
+let orderModal: HTMLElement | null;
+let orderForm: HTMLFormElement | null;
+let cancelOrder: HTMLElement | null;
+let menuGrid: HTMLElement | null;
+let popularItems: HTMLElement | null;
+let mobileMenuBtn: HTMLElement | null;
+let mobileMenu: HTMLElement | null;
+let tableNumberInput: HTMLInputElement | null;
+let tableNumberDisplay: HTMLElement | null;
+let tableBadge: HTMLElement | null;
 
 // Get table number from URL or default to 1
 function getTableNumber(): string {
+  // Check path for /masa[n]
+  const pathMatch = window.location.pathname.match(/\/masa(\d+)/);
+  if (pathMatch) {
+    return pathMatch[1];
+  }
+
+  // Check query param
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('masa') || '1';
 }
@@ -309,32 +318,29 @@ function updateCartUI() {
 
   // Update Checkout Button
   if (checkoutBtn) {
-    (checkoutBtn as HTMLButtonElement).disabled = cart.length === 0;
+    if (cart.length === 0) {
+      checkoutBtn.setAttribute('disabled', 'true');
+    } else {
+      checkoutBtn.removeAttribute('disabled');
+    }
   }
 }
 
-// Open/Close Cart
-function openCart() {
-  if (cartSidebar && cartPanel) {
-    cartSidebar.classList.remove('hidden');
-    setTimeout(() => {
-      cartPanel.style.transform = 'translateX(0)';
-    }, 10);
-  }
+// Open/Close Cart Logic
+function toggleCart() {
+  cartSidebar?.classList.toggle('active');
 }
+
+
 
 function closeCartSidebar() {
-  if (cartSidebar && cartPanel) {
-    cartPanel.style.transform = 'translateX(100%)';
-    setTimeout(() => {
-      cartSidebar.classList.add('hidden');
-    }, 300);
-  }
+  cartSidebar?.classList.remove('active');
 }
 
 // Open/Close Order Modal
 function openOrderModal() {
   if (orderModal) {
+    closeCartSidebar();
     orderModal.classList.remove('hidden');
   }
 }
@@ -366,9 +372,16 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 
 // Submit Order to Firebase
 async function submitOrder(formData: FormData) {
+  const tableNum = formData.get('tableNumber') || '1';
+
+  if (!cart || cart.length === 0) {
+    showToast('Sepetiniz boş!', 'error');
+    return;
+  }
+
   const orderData = {
     customerName: formData.get('customerName'),
-    tableNumber: formData.get('tableNumber'),
+    tableNumber: tableNum,
     notes: formData.get('notes') || '',
     items: cart.map(item => ({
       id: item.id,
@@ -423,9 +436,44 @@ function setupCategoryFilters() {
 }
 
 // Initialize
+// Initialize
 function init() {
-  // Check maintenance mode
-  checkMaintenanceMode();
+  // Initialize DOM Elements
+  cartBtn = document.getElementById('cartBtn');
+  // ... (keep existing)
+
+  orderForm = document.getElementById('orderForm') as HTMLFormElement;
+
+  // Document Level Event Delegation for robust handling
+
+
+  cartBadge = document.getElementById('cartBadge');
+  cartSidebar = document.getElementById('cartSidebar');
+  cartOverlay = document.getElementById('cartOverlay');
+  closeCart = document.getElementById('closeCart');
+  cartItems = document.getElementById('cartItems');
+  cartTotal = document.getElementById('cartTotal');
+  checkoutBtn = document.getElementById('checkoutBtn');
+  orderModal = document.getElementById('orderModal');
+  orderForm = document.getElementById('orderForm') as HTMLFormElement;
+  cancelOrder = document.getElementById('cancelOrder');
+  menuGrid = document.getElementById('menuGrid');
+  popularItems = document.getElementById('popularItems');
+  mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  mobileMenu = document.getElementById('mobileMenu');
+  tableNumberInput = document.getElementById('tableNumberInput') as HTMLInputElement;
+  tableNumberDisplay = document.getElementById('tableNumberDisplay');
+  tableBadge = document.getElementById('tableBadge');
+
+  // Initialize Site Settings
+  initSiteSettings();
+
+  // Initialize Menu
+  migrateMenuToFirebase();
+  initMenuListeners();
+
+  // Update Links for Table Routing
+  updateNavigationLinks();
 
   // Set table number from URL
   setTableNumber();
@@ -436,7 +484,7 @@ function init() {
   });
 
   // Cart Events
-  cartBtn?.addEventListener('click', openCart);
+  cartBtn?.addEventListener('click', toggleCart);
   closeCart?.addEventListener('click', closeCartSidebar);
   cartOverlay?.addEventListener('click', closeCartSidebar);
   checkoutBtn?.addEventListener('click', openOrderModal);
@@ -445,8 +493,25 @@ function init() {
   cancelOrder?.addEventListener('click', closeOrderModal);
   orderForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData(orderForm);
-    await submitOrder(formData);
+    if (!orderForm) return;
+
+    const submitBtn = document.getElementById('confirmOrderBtn') as HTMLButtonElement;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'İşleniyor...';
+    }
+
+    try {
+      const formData = new FormData(e.currentTarget as HTMLFormElement);
+      await submitOrder(formData);
+    } catch (error) {
+      console.error('Order submit error:', error);
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Siparişi Onayla';
+      }
+    }
   });
 
   // Close modal on overlay click
@@ -471,15 +536,126 @@ function init() {
   updateCartUI();
 }
 
-// Check Maintenance Mode
-function checkMaintenanceMode() {
+// Migrate Menu (One-time)
+async function migrateMenuToFirebase() {
+  const collectionRef = collection(db, 'menuItems');
+  const snapshot = await getDocs(collectionRef);
+
+  if (snapshot.empty) {
+    console.log('Migrating menu to Firebase...');
+    for (const item of initialMenuData) {
+      try {
+        await setDoc(doc(db, 'menuItems', item.id), {
+          ...item,
+          createdAt: serverTimestamp()
+        });
+        console.log(`Migrated: ${item.name}`);
+      } catch (error) {
+        console.error(`Error migrating ${item.name}:`, error);
+      }
+    }
+    console.log('Menu migration completed!');
+  } else {
+    console.log('Menu already exists in Firebase, skipping migration.');
+  }
+}
+
+// Initialize Menu Listeners
+function initMenuListeners() {
+  const q = collection(db, 'menuItems');
+  onSnapshot(q, (snapshot) => {
+    menuData = snapshot.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id
+    })) as MenuItem[];
+
+    // Re-render based on current page
+    const pageType = getCurrentPageType();
+    if (pageType === 'home') {
+      renderPopularItems();
+    } else {
+      renderMenuItems();
+    }
+  });
+}
+
+// Update Navigation Links to Persist Table Number
+function updateNavigationLinks() {
+  const pathMatch = window.location.pathname.match(/\/masa(\d+)/);
+  if (!pathMatch) return;
+
+  const prefix = pathMatch[0]; // e.g. "/masa1"
+
+  document.querySelectorAll('a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    // Skip external links, anchors, mailto, tel
+    if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
+
+    // Skip if already prefixed
+    if (href.startsWith('/masa')) return;
+
+    // Normalize and prefix
+    let newHref = href;
+    if (href === './' || href === '/' || href === '.') {
+      newHref = `${prefix}/`;
+    } else if (href.startsWith('./')) {
+      newHref = `${prefix}/${href.substring(2)}`;
+    } else if (href.startsWith('/')) {
+      newHref = `${prefix}${href}`;
+    } else {
+      newHref = `${prefix}/${href}`;
+    }
+
+    link.setAttribute('href', newHref);
+  });
+}
+
+// Maintenance Mode
+// Initialize Site Settings (Maintenance & Content)
+function initSiteSettings() {
   onSnapshot(doc(db, 'settings', 'site'), (snapshot) => {
     if (snapshot.exists()) {
       const settings = snapshot.data();
+
+      // Maintenance Mode
       if (settings.maintenanceMode) {
         showMaintenanceOverlay();
       } else {
         hideMaintenanceOverlay();
+      }
+
+      // Update Site Content
+      if (settings.cafeName) {
+        const headerBrand = document.getElementById('headerBrand');
+        const heroBrand = document.getElementById('heroBrand');
+        const footerBrand = document.getElementById('footerBrand');
+
+        if (headerBrand) headerBrand.textContent = settings.cafeName;
+        if (heroBrand) heroBrand.textContent = settings.cafeName;
+        if (footerBrand) footerBrand.textContent = settings.cafeName;
+        document.title = `${settings.cafeName} | Ana Sayfa`;
+
+        // Update overlay text if it exists
+        const overlayBrand = document.querySelector('#maintenanceOverlay p.text-amber-500');
+        if (overlayBrand) overlayBrand.textContent = settings.cafeName;
+      }
+
+      if (settings.cafePhone) {
+        const footerPhone = document.getElementById('footerPhone');
+        if (footerPhone) footerPhone.textContent = settings.cafePhone;
+      }
+
+      if (settings.cafeAddress) {
+        const footerAddress = document.getElementById('footerAddress');
+        if (footerAddress) footerAddress.textContent = settings.cafeAddress;
+      }
+
+      // Update Copyright
+      const footerCopyright = document.getElementById('footerCopyright');
+      if (footerCopyright) {
+        footerCopyright.innerHTML = `&copy; ${new Date().getFullYear()} ${settings.cafeName || 'Best of Cafe'}. Tüm hakları saklıdır.`;
       }
     }
   });
@@ -491,7 +667,8 @@ function showMaintenanceOverlay() {
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'maintenanceOverlay';
-    overlay.className = 'fixed inset-0 bg-gray-900/95 z-[9999] flex items-center justify-center';
+    overlay.className = 'fixed inset-0 bg-gray-900/95 flex items-center justify-center';
+    overlay.style.zIndex = '9999';
     overlay.innerHTML = `
       <div class="text-center text-white p-8">
         <div class="w-24 h-24 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -523,6 +700,9 @@ function hideMaintenanceOverlay() {
 (window as any).removeFromCart = removeFromCart;
 (window as any).updateQuantity = updateQuantity;
 
-// Initialize on DOM Ready
-document.addEventListener('DOMContentLoaded', init);
-
+// DOM Loaded Event
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
