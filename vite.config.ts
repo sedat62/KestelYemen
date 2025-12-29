@@ -23,7 +23,7 @@ export default defineConfig({
             },
         },
     ],
-    base: '/',
+    base: '/KestelYemen/',
     build: {
         rollupOptions: {
             input: {
